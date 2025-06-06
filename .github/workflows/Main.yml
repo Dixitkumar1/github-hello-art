@@ -1,0 +1,97 @@
+name: HELLO Pattern Commits
+
+on:
+  schedule:
+    - cron: "30 2 * * *"  # Daily at 8:00 AM IST
+  workflow_dispatch:
+
+jobs:
+  hello-year-pattern:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Smart HELLO Pattern Commits
+        run: |
+          TODAY=$(date +%Y-%m-%d)
+
+          # Git setup
+          git config --global user.name "dixitkumar1"
+          git config --global user.email "dixitsharma.tech@gmail.com"
+          git pull --rebase origin main
+
+          # Define HELLO pattern dates month-wise (dark green)
+          DARK_GREEN_DATES=(
+            # H in June
+            "2025-06-08:6" "2025-06-09:6" "2025-06-10:6" "2025-06-11:6" "2025-06-12:6"
+            "2025-06-13:6" "2025-06-14:6" "2025-06-16:6" "2025-06-18:6" "2025-06-20:6"
+            "2025-06-21:6" "2025-06-22:6" "2025-06-23:6" "2025-06-24:6" "2025-06-25:6"
+
+            # E in July
+            "2025-07-01:6" "2025-07-02:6" "2025-07-03:6" "2025-07-05:6"
+            "2025-07-08:6" "2025-07-09:6" "2025-07-10:6" "2025-07-12:6"
+            "2025-07-15:6" "2025-07-16:6" "2025-07-17:6" "2025-07-19:6"
+
+            # L in August
+            "2025-08-01:6" "2025-08-02:6" "2025-08-03:6" "2025-08-04:6" "2025-08-05:6"
+            "2025-08-06:6" "2025-08-07:6" "2025-08-08:6" "2025-08-12:6" "2025-08-16:6"
+
+            # L in September
+            "2025-09-01:6" "2025-09-02:6" "2025-09-03:6" "2025-09-04:6" "2025-09-05:6"
+            "2025-09-06:6" "2025-09-07:6" "2025-09-08:6" "2025-09-12:6" "2025-09-16:6"
+
+            # O in October (circle)
+            "2025-10-01:6" "2025-10-02:6" "2025-10-03:6" "2025-10-04:6"
+            "2025-10-05:6" "2025-10-09:6" "2025-10-10:6" "2025-10-11:6"
+            "2025-10-12:6" "2025-10-13:6" "2025-10-14:6"
+          )
+
+          # Light green random low commits rest of the year
+          LIGHT_GREEN_DATES=(
+            "2025-11-01:1" "2025-11-10:2" "2025-11-15:1"
+            "2025-12-03:1" "2025-12-09:1" "2025-12-16:2"
+          )
+
+          make_commit() {
+            for i in $(seq 1 "$1"); do
+              echo "// Auto Commit $i on $TODAY" >> hello.cpp
+              git add hello.cpp
+              git commit -m "Auto Commit $i on $TODAY"
+            done
+            git push origin main
+          }
+
+          COMMIT_COUNT=0
+
+          # Dark green check
+          for entry in "${DARK_GREEN_DATES[@]}"; do
+            DATE=$(echo "$entry" | cut -d: -f1)
+            COUNT=$(echo "$entry" | cut -d: -f2)
+            if [[ "$DATE" == "$TODAY" ]]; then
+              COMMIT_COUNT=$COUNT
+              break
+            fi
+          done
+
+          # Light green check only if not in dark
+          if [[ $COMMIT_COUNT -eq 0 ]]; then
+            for entry in "${LIGHT_GREEN_DATES[@]}"; do
+              DATE=$(echo "$entry" | cut -d: -f1)
+              COUNT=$(echo "$entry" | cut -d: -f2)
+              if [[ "$DATE" == "$TODAY" ]]; then
+                COMMIT_COUNT=$COUNT
+                break
+              fi
+            done
+          fi
+
+          # Final commit logic
+          if [[ $COMMIT_COUNT -gt 0 ]]; then
+            make_commit "$COMMIT_COUNT"
+          else
+            echo "// Hello World Commit on $TODAY" >> hello.cpp
+            git add hello.cpp
+            git commit -m "Hello World Commit on $TODAY"
+            git push origin main
+          fi

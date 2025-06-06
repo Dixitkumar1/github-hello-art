@@ -2,7 +2,7 @@ name: HELLO Pattern Commits
 
 on:
   schedule:
-    - cron: "30 2 * * *"  # Daily at 8:00 AM IST
+    - cron: "30 2 * * *"  # Roz 8:00 AM IST pe chalega
   workflow_dispatch:
 
 jobs:
@@ -16,38 +16,38 @@ jobs:
         run: |
           TODAY=$(date +%Y-%m-%d)
 
-          # Git setup
+          # Git config
           git config --global user.name "dixitkumar1"
           git config --global user.email "dixitsharma.tech@gmail.com"
           git pull --rebase origin main
 
-          # Define HELLO pattern dates month-wise (dark green)
+          # Dark green (high commits = 20)
           DARK_GREEN_DATES=(
             # H in June
-            "2025-06-08:6" "2025-06-09:6" "2025-06-10:6" "2025-06-11:6" "2025-06-12:6"
-            "2025-06-13:6" "2025-06-14:6" "2025-06-16:6" "2025-06-18:6" "2025-06-20:6"
-            "2025-06-21:6" "2025-06-22:6" "2025-06-23:6" "2025-06-24:6" "2025-06-25:6"
+            "2025-06-08:20" "2025-06-09:20" "2025-06-10:20" "2025-06-11:20" "2025-06-12:20"
+            "2025-06-13:20" "2025-06-14:20" "2025-06-16:20" "2025-06-18:20" "2025-06-20:20"
+            "2025-06-21:20" "2025-06-22:20" "2025-06-23:20" "2025-06-24:20" "2025-06-25:20"
 
             # E in July
-            "2025-07-01:6" "2025-07-02:6" "2025-07-03:6" "2025-07-05:6"
-            "2025-07-08:6" "2025-07-09:6" "2025-07-10:6" "2025-07-12:6"
-            "2025-07-15:6" "2025-07-16:6" "2025-07-17:6" "2025-07-19:6"
+            "2025-07-01:20" "2025-07-02:20" "2025-07-03:20" "2025-07-05:20"
+            "2025-07-08:20" "2025-07-09:20" "2025-07-10:20" "2025-07-12:20"
+            "2025-07-15:20" "2025-07-16:20" "2025-07-17:20" "2025-07-19:20"
 
             # L in August
-            "2025-08-01:6" "2025-08-02:6" "2025-08-03:6" "2025-08-04:6" "2025-08-05:6"
-            "2025-08-06:6" "2025-08-07:6" "2025-08-08:6" "2025-08-12:6" "2025-08-16:6"
+            "2025-08-01:20" "2025-08-02:20" "2025-08-03:20" "2025-08-04:20" "2025-08-05:20"
+            "2025-08-06:20" "2025-08-07:20" "2025-08-08:20" "2025-08-12:20" "2025-08-16:20"
 
             # L in September
-            "2025-09-01:6" "2025-09-02:6" "2025-09-03:6" "2025-09-04:6" "2025-09-05:6"
-            "2025-09-06:6" "2025-09-07:6" "2025-09-08:6" "2025-09-12:6" "2025-09-16:6"
+            "2025-09-01:20" "2025-09-02:20" "2025-09-03:20" "2025-09-04:20" "2025-09-05:20"
+            "2025-09-06:20" "2025-09-07:20" "2025-09-08:20" "2025-09-12:20" "2025-09-16:20"
 
             # O in October (circle)
-            "2025-10-01:6" "2025-10-02:6" "2025-10-03:6" "2025-10-04:6"
-            "2025-10-05:6" "2025-10-09:6" "2025-10-10:6" "2025-10-11:6"
-            "2025-10-12:6" "2025-10-13:6" "2025-10-14:6"
+            "2025-10-01:20" "2025-10-02:20" "2025-10-03:20" "2025-10-04:20"
+            "2025-10-05:20" "2025-10-09:20" "2025-10-10:20" "2025-10-11:20"
+            "2025-10-12:20" "2025-10-13:20" "2025-10-14:20"
           )
 
-          # Light green random low commits rest of the year
+          # Light green (low commits = 1 or 2)
           LIGHT_GREEN_DATES=(
             "2025-11-01:1" "2025-11-10:2" "2025-11-15:1"
             "2025-12-03:1" "2025-12-09:1" "2025-12-16:2"
@@ -64,7 +64,7 @@ jobs:
 
           COMMIT_COUNT=0
 
-          # Dark green check
+          # Check dark green dates first
           for entry in "${DARK_GREEN_DATES[@]}"; do
             DATE=$(echo "$entry" | cut -d: -f1)
             COUNT=$(echo "$entry" | cut -d: -f2)
@@ -74,7 +74,7 @@ jobs:
             fi
           done
 
-          # Light green check only if not in dark
+          # If not dark green, check light green dates
           if [[ $COMMIT_COUNT -eq 0 ]]; then
             for entry in "${LIGHT_GREEN_DATES[@]}"; do
               DATE=$(echo "$entry" | cut -d: -f1)
@@ -86,12 +86,10 @@ jobs:
             done
           fi
 
-          # Final commit logic
-          if [[ $COMMIT_COUNT -gt 0 ]]; then
-            make_commit "$COMMIT_COUNT"
-          else
-            echo "// Hello World Commit on $TODAY" >> hello.cpp
-            git add hello.cpp
-            git commit -m "Hello World Commit on $TODAY"
-            git push origin main
+          # Default: 1 commit if date not in any list
+          if [[ $COMMIT_COUNT -eq 0 ]]; then
+            COMMIT_COUNT=1
           fi
+
+          # Run commits
+          make_commit "$COMMIT_COUNT"

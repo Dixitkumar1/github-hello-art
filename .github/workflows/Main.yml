@@ -2,7 +2,7 @@ name: HELLO Pattern Commits
 
 on:
   schedule:
-    - cron: "30 2 * * *"  # Roz 8:00 AM IST pe chalega
+    - cron: "30 2 * * *"  #  8:00 AM
   workflow_dispatch:
 
 jobs:
